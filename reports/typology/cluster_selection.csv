@@ -1,0 +1,15 @@
+method,k,silhouette,stability_ari,smallest_cluster
+kmeans,2,0.313,0.957,33
+kmeans,3,0.309,0.851,4
+kmeans,4,0.198,0.761,4
+kmeans,5,0.183,0.599,4
+kmeans,6,0.148,0.524,4
+kmeans,7,0.172,0.611,1
+kmeans,8,0.172,0.528,1
+ward,2,0.346,0.554,20
+ward,3,0.31,0.571,4
+ward,4,0.196,0.499,4
+ward,5,0.134,0.577,4
+ward,6,0.146,0.564,2
+ward,7,0.145,0.467,2
+ward,8,0.147,0.494,1

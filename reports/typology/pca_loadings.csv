@@ -1,0 +1,17 @@
+indicator,PC1,PC2,PC3
+Cambriolages de logement,0.228,0.118,0.353
+Destructions et dégradations volontaires,0.23,0.201,-0.059
+Escroqueries et fraudes aux moyens de paiement,0.079,0.505,0.005
+Homicides,0.187,-0.403,-0.219
+Tentatives d'homicide,0.263,-0.321,-0.13
+Trafic de stupéfiants,0.269,0.0,-0.357
+Usage de stupéfiants,0.243,0.162,-0.135
+Violences physiques hors cadre familial,0.279,-0.282,0.01
+Violences physiques intrafamiliales,0.185,-0.224,0.42
+Violences sexuelles,0.045,-0.201,0.609
+Vols avec armes,0.299,-0.26,-0.081
+Vols d'accessoires sur véhicules,0.223,0.273,0.246
+Vols dans les véhicules,0.324,0.144,0.122
+Vols de véhicule,0.305,0.133,0.065
+Vols sans violence contre des personnes,0.29,0.218,-0.163
+Vols violents sans arme,0.343,0.009,-0.041

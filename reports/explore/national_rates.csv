@@ -1,0 +1,161 @@
+indicator,year,rate
+Cambriolages de logement,2016,6.98946
+Cambriolages de logement,2017,7.03562
+Cambriolages de logement,2018,6.52488
+Cambriolages de logement,2019,6.46967
+Cambriolages de logement,2020,5.13122
+Cambriolages de logement,2021,5.10054
+Cambriolages de logement,2022,5.62362
+Cambriolages de logement,2023,5.77308
+Cambriolages de logement,2024,5.80175
+Cambriolages de logement,2025,5.62729
+Destructions et dégradations volontaires,2016,9.40532
+Destructions et dégradations volontaires,2017,9.35458
+Destructions et dégradations volontaires,2018,9.00572
+Destructions et dégradations volontaires,2019,8.9641
+Destructions et dégradations volontaires,2020,7.68754
+Destructions et dégradations volontaires,2021,7.84405
+Destructions et dégradations volontaires,2022,7.89991
+Destructions et dégradations volontaires,2023,8.07622
+Destructions et dégradations volontaires,2024,7.73728
+Destructions et dégradations volontaires,2025,7.88743
+Escroqueries et fraudes aux moyens de paiement,2016,3.74488
+Escroqueries et fraudes aux moyens de paiement,2017,3.81948
+Escroqueries et fraudes aux moyens de paiement,2018,3.85799
+Escroqueries et fraudes aux moyens de paiement,2019,4.35191
+Escroqueries et fraudes aux moyens de paiement,2020,4.5508
+Escroqueries et fraudes aux moyens de paiement,2021,5.2929
+Escroqueries et fraudes aux moyens de paiement,2022,5.69344
+Escroqueries et fraudes aux moyens de paiement,2023,5.98363
+Escroqueries et fraudes aux moyens de paiement,2024,6.06654
+Escroqueries et fraudes aux moyens de paiement,2025,6.51731
+Homicides,2016,0.01367
+Homicides,2017,0.0125
+Homicides,2018,0.01261
+Homicides,2019,0.01306
+Homicides,2020,0.01169
+Homicides,2021,0.01241
+Homicides,2022,0.01408
+Homicides,2023,0.01457
+Homicides,2024,0.01428
+Homicides,2025,0.01426
+Tentatives d'homicide,2016,0.03391
+Tentatives d'homicide,2017,0.0342
+Tentatives d'homicide,2018,0.03705
+Tentatives d'homicide,2019,0.04042
+Tentatives d'homicide,2020,0.0462
+Tentatives d'homicide,2021,0.04635
+Tentatives d'homicide,2022,0.05269
+Tentatives d'homicide,2023,0.05874
+Tentatives d'homicide,2024,0.06276
+Tentatives d'homicide,2025,0.0655
+Trafic de stupéfiants,2016,0.61474
+Trafic de stupéfiants,2017,0.66187
+Trafic de stupéfiants,2018,0.68263
+Trafic de stupéfiants,2019,0.7038
+Trafic de stupéfiants,2020,0.61487
+Trafic de stupéfiants,2021,0.69453
+Trafic de stupéfiants,2022,0.72395
+Trafic de stupéfiants,2023,0.71724
+Trafic de stupéfiants,2024,0.76871
+Trafic de stupéfiants,2025,0.84046
+Usage de stupéfiants,2016,2.74298
+Usage de stupéfiants,2017,2.83196
+Usage de stupéfiants,2018,2.79453
+Usage de stupéfiants,2019,2.64378
+Usage de stupéfiants,2020,2.37505
+Usage de stupéfiants,2021,3.27156
+Usage de stupéfiants,2022,3.69613
+Usage de stupéfiants,2023,3.83666
+Usage de stupéfiants,2024,4.25462
+Usage de stupéfiants,2025,4.53398
+Violences physiques hors cadre familial,2016,2.45349
+Violences physiques hors cadre familial,2017,2.574
+Violences physiques hors cadre familial,2018,2.73207
+Violences physiques hors cadre familial,2019,2.76079
+Violences physiques hors cadre familial,2020,2.50165
+Violences physiques hors cadre familial,2021,2.71069
+Violences physiques hors cadre familial,2022,2.94647
+Violences physiques hors cadre familial,2023,3.01234
+Violences physiques hors cadre familial,2024,3.00595
+Violences physiques hors cadre familial,2025,3.15619
+Violences physiques intrafamiliales,2016,1.70856
+Violences physiques intrafamiliales,2017,1.76226
+Violences physiques intrafamiliales,2018,1.92891
+Violences physiques intrafamiliales,2019,2.20903
+Violences physiques intrafamiliales,2020,2.42814
+Violences physiques intrafamiliales,2021,2.77461
+Violences physiques intrafamiliales,2022,3.18776
+Violences physiques intrafamiliales,2023,3.48512
+Violences physiques intrafamiliales,2024,3.57509
+Violences physiques intrafamiliales,2025,3.75535
+Violences sexuelles,2016,0.77926
+Violences sexuelles,2017,0.85358
+Violences sexuelles,2018,1.00721
+Violences sexuelles,2019,1.12022
+Violences sexuelles,2020,1.14344
+Violences sexuelles,2021,1.42445
+Violences sexuelles,2022,1.56011
+Violences sexuelles,2023,1.66902
+Violences sexuelles,2024,1.79141
+Violences sexuelles,2025,1.93331
+Vols avec armes,2016,0.16372
+Vols avec armes,2017,0.15039
+Vols avec armes,2018,0.13435
+Vols avec armes,2019,0.13549
+Vols avec armes,2020,0.12713
+Vols avec armes,2021,0.12494
+Vols avec armes,2022,0.12601
+Vols avec armes,2023,0.12698
+Vols avec armes,2024,0.12556
+Vols avec armes,2025,0.11577
+Vols d'accessoires sur véhicules,2016,1.61346
+Vols d'accessoires sur véhicules,2017,1.53063
+Vols d'accessoires sur véhicules,2018,1.43343
+Vols d'accessoires sur véhicules,2019,1.35482
+Vols d'accessoires sur véhicules,2020,1.11036
+Vols d'accessoires sur véhicules,2021,1.14929
+Vols d'accessoires sur véhicules,2022,1.49007
+Vols d'accessoires sur véhicules,2023,1.35448
+Vols d'accessoires sur véhicules,2024,1.40529
+Vols d'accessoires sur véhicules,2025,1.39444
+Vols dans les véhicules,2016,4.09774
+Vols dans les véhicules,2017,4.07064
+Vols dans les véhicules,2018,4.01689
+Vols dans les véhicules,2019,4.01265
+Vols dans les véhicules,2020,3.32171
+Vols dans les véhicules,2021,3.32907
+Vols dans les véhicules,2022,3.61406
+Vols dans les véhicules,2023,3.72465
+Vols dans les véhicules,2024,3.74626
+Vols dans les véhicules,2025,3.41532
+Vols de véhicule,2016,2.47375
+Vols de véhicule,2017,2.31822
+Vols de véhicule,2018,2.12884
+Vols de véhicule,2019,2.08121
+Vols de véhicule,2020,1.80634
+Vols de véhicule,2021,1.80632
+Vols de véhicule,2022,1.95739
+Vols de véhicule,2023,2.04704
+Vols de véhicule,2024,2.01285
+Vols de véhicule,2025,1.82611
+Vols sans violence contre des personnes,2016,10.64929
+Vols sans violence contre des personnes,2017,10.68874
+Vols sans violence contre des personnes,2018,10.49286
+Vols sans violence contre des personnes,2019,10.75388
+Vols sans violence contre des personnes,2020,8.17732
+Vols sans violence contre des personnes,2021,8.61061
+Vols sans violence contre des personnes,2022,9.7079
+Vols sans violence contre des personnes,2023,9.39478
+Vols sans violence contre des personnes,2024,8.89195
+Vols sans violence contre des personnes,2025,9.10098
+Vols violents sans arme,2016,1.4224
+Vols violents sans arme,2017,1.34083
+Vols violents sans arme,2018,1.23859
+Vols violents sans arme,2019,1.20292
+Vols violents sans arme,2020,0.97338
+Vols violents sans arme,2021,0.91733
+Vols violents sans arme,2022,0.87405
+Vols violents sans arme,2023,0.79399
+Vols violents sans arme,2024,0.70653
+Vols violents sans arme,2025,0.71971

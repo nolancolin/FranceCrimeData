@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Délinquance enregistrée par département</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+  :root { --ink: #1d2430; --muted: #5b6573; --line: #dde2e8; --accent: #1f5f8b; --bg: #fbfbfa; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+  main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1.2rem; margin: 40px 0 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+  p, li { color: var(--muted); }
+  a { color: var(--accent); }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; }
+  label { font-size: .9rem; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+  select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: white; max-width: 100%; }
+  .map { width: 100%; height: 520px; }
+  @media (max-width: 600px) { .map { height: 360px; } }
+  table { border-collapse: collapse; font-size: .9rem; margin-top: 8px; }
+  td, th { padding: 4px 12px 4px 0; text-align: left; border-bottom: 1px solid var(--line); }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 8px 0; font-size: .9rem; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .group { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: white; font-size: .9rem; }
+  .group p { margin: 4px 0; }
+  footer { margin-top: 48px; font-size: .85rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Délinquance enregistrée par département</h1>
+  <p>Faits enregistrés par la police et la gendarmerie, 2016 à 2025 (SSMSI). Ce sont des faits
+    enregistrés, pas la délinquance réelle : une partie des victimes ne porte pas plainte.
+    Code et méthode : <a href="https://github.com/nolancolin/delinquance-france">dépôt GitHub</a>.</p>
+
+  <h2>Taux par indicateur et par année</h2>
+  <div class="controls">
+    <label>Indicateur <select id="indicator"></select></label>
+    <label>Année <select id="year"></select></label>
+  </div>
+  <p id="unit"></p>
+  <div id="rate-map" class="map"></div>
+  <p>Outre-mer (hors carte) :</p>
+  <table id="overseas"></table>
+
+  <h2>Typologie des départements</h2>
+  <p>Groupes obtenus par KMeans sur le profil de taux (moyenne des 3 dernières années, log, standardisé).
+    Les écarts sont exprimés en écarts-types par rapport à la moyenne des départements.</p>
+  <div id="cluster-legend" class="legend"></div>
+  <div id="cluster-map" class="map"></div>
+  <div id="groups" class="groups"></div>
+
+  <h2>Départements jumeaux</h2>
+  <p>Les 5 départements dont le profil de taux est le plus proche (distance euclidienne sur le profil standardisé).
+    Proche ne veut pas dire voisin sur la carte.</p>
+  <div class="controls"><label>Département <select id="dep"></select></label></div>
+  <table id="twins"></table>
+  <div id="twin-map" class="map"></div>
+
+  <footer id="footer"></footer>
+</main>
+<script>
+const COLORS = ["#1f5f8b", "#d9822b", "#3a9d5d", "#9b59b6", "#c0392b", "#7f8c8d", "#16a085", "#8e6c3a"];
+const fmt = (x) => x === undefined ? "n.d." : x.toLocaleString("fr-FR", { maximumSignificantDigits: 3 });
+const label = (dep, data) => `${data.names[dep] || dep} (${dep})`;
+const geoLayout = { margin: { l: 0, r: 0, t: 0, b: 0 }, paper_bgcolor: "rgba(0,0,0,0)",
+  geo: { fitbounds: "locations", visible: false, projection: { type: "mercator" }, bgcolor: "rgba(0,0,0,0)" } };
+const config = { displayModeBar: false, responsive: true };
+
+function fill(select, values, text = (v) => v) {
+  select.innerHTML = values.map((v) => `<option value="${v}">${text(v)}</option>`).join("");
+}
+
+function flatTrace(geo, deps, color, data, extra = {}) {
+  return { type: "choropleth", geojson: geo, featureidkey: "properties.code", locations: deps,
+    z: deps.map(() => 1), colorscale: [[0, color], [1, color]], showscale: false,
+    text: deps.map((d) => label(d, data)), hoverinfo: "text", marker: { line: { color: "white", width: 0.5 } }, ...extra };
+}
+
+function drawRates(geo, data) {
+  const ind = document.getElementById("indicator").value;
+  const year = document.getElementById("year").value;
+  const rates = data.rates[ind][year];
+  const deps = Object.keys(rates).filter((d) => !data.overseas.includes(d));
+  const unit = data.per_housing.includes(ind) ? "logements" : "habitants";
+  document.getElementById("unit").textContent = `Taux pour 1 000 ${unit}, ${year}.`;
+  Plotly.react("rate-map", [{ type: "choropleth", geojson: geo, featureidkey: "properties.code",
+    locations: deps, z: deps.map((d) => rates[d]), colorscale: "YlOrRd", reversescale: true,
+    text: deps.map((d) => `${label(d, data)}<br>${fmt(rates[d])} pour 1 000`), hoverinfo: "text",
+    marker: { line: { color: "white", width: 0.5 } }, colorbar: { thickness: 12, len: 0.6 } }], geoLayout, config);
+  document.getElementById("overseas").innerHTML = data.overseas
+    .map((d) => `<tr><td>${label(d, data)}</td><td>${fmt(rates[d])}</td></tr>`).join("");
+}
+
+function drawClusters(geo, data) {
+  const ids = Object.keys(data.cluster_info);
+  const traces = ids.map((c, i) => flatTrace(geo,
+    Object.keys(data.clusters).filter((d) => String(data.clusters[d]) === c && !data.overseas.includes(d)), COLORS[i], data));
+  Plotly.newPlot("cluster-map", traces, geoLayout, config);
+  document.getElementById("cluster-legend").innerHTML = ids.map((c, i) =>
+    `<span><span class="swatch" style="background:${COLORS[i]}"></span>Groupe ${c} (${data.cluster_info[c].size})</span>`).join("");
+  const list = (obj) => Object.entries(obj).map(([k, v]) => `${k} (${v > 0 ? "+" : ""}${fmt(v)})`).join(", ");
+  document.getElementById("groups").innerHTML = ids.map((c, i) => {
+    const info = data.cluster_info[c];
+    const overseas = info.members.filter((d) => data.overseas.includes(d)).map((d) => data.names[d]);
+    return `<div class="group"><strong style="color:${COLORS[i]}">Groupe ${c}</strong>, ${info.size} départements
+      <p>Écarts les plus élevés : ${list(info.above)}</p><p>Écarts les plus faibles : ${list(info.below)}</p>
+      ${overseas.length ? `<p>Outre-mer : ${overseas.join(", ")}</p>` : ""}</div>`;
+  }).join("");
+}
+
+function drawTwins(geo, data) {
+  const dep = document.getElementById("dep").value;
+  const twins = data.twins[dep];
+  document.getElementById("twins").innerHTML = "<tr><th>Rang</th><th>Département</th><th>Distance</th></tr>" +
+    twins.map(([t, dist], i) => `<tr><td>${i + 1}</td><td>${label(t, data)}</td><td>${fmt(dist)}</td></tr>`).join("");
+  const mainland = Object.keys(data.names).filter((d) => !data.overseas.includes(d));
+  const near = twins.map(([t]) => t);
+  const traces = [
+    flatTrace(geo, mainland.filter((d) => d !== dep && !near.includes(d)), "#e6e9ed", data),
+    flatTrace(geo, near.filter((d) => mainland.includes(d)), "#7fb3d5", data),
+    flatTrace(geo, mainland.includes(dep) ? [dep] : [], "#1f5f8b", data),
+  ];
+  Plotly.react("twin-map", traces, geoLayout, config);
+}
+
+Promise.all([fetch("data.json").then((r) => r.json()), fetch("departements.geojson").then((r) => r.json())])
+  .then(([data, geo]) => {
+    const deps = Object.keys(data.names).sort();
+    fill(document.getElementById("indicator"), data.indicators);
+    fill(document.getElementById("year"), data.years);
+    document.getElementById("year").value = data.years[data.years.length - 1];
+    fill(document.getElementById("dep"), deps, (d) => label(d, data));
+    document.getElementById("dep").value = "75";
+    document.getElementById("indicator").onchange = () => drawRates(geo, data);
+    document.getElementById("year").onchange = () => drawRates(geo, data);
+    document.getElementById("dep").onchange = () => drawTwins(geo, data);
+    drawRates(geo, data);
+    drawClusters(geo, data);
+    drawTwins(geo, data);
+    document.getElementById("footer").innerHTML = `Données : SSMSI, base départementale mise à jour le ${data.source.updated}
+      (sha256 ${data.source.sha256}…), Licence Ouverte 2.0. Fond de carte : IGN Admin Express via france-geojson,
+      Licence Ouverte. Outre-mer non cartographié, valeurs en tableau. Aucune interprétation causale.`;
+  });
+</script>
+</body>
+</html>

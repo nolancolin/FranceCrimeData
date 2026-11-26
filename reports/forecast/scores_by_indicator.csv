@@ -1,0 +1,17 @@
+indicator,mae_naive,mae_trend,mae_gbm,wape_naive,wape_trend,wape_gbm
+Cambriolages de logement,0.1207,0.1686,0.183,0.1096,0.1519,0.1633
+Destructions et dégradations volontaires,0.0472,0.0696,0.0795,0.0474,0.0696,0.0772
+Escroqueries et fraudes aux moyens de paiement,0.0738,0.0752,0.0672,0.0695,0.0744,0.0666
+Homicides,0.2553,0.3316,0.2228,0.3973,0.531,0.3577
+Tentatives d'homicide,0.3299,0.4364,0.2851,0.313,0.4608,0.2877
+Trafic de stupéfiants,0.1797,0.2292,0.1747,0.1593,0.2115,0.1616
+Usage de stupéfiants,0.1326,0.1634,0.1298,0.1253,0.1717,0.1271
+Violences physiques hors cadre familial,0.0717,0.0914,0.0773,0.0686,0.089,0.0752
+Violences physiques intrafamiliales,0.0899,0.0789,0.0624,0.083,0.0803,0.0625
+Violences sexuelles,0.0937,0.099,0.069,0.0903,0.1007,0.0692
+Vols avec armes,0.2364,0.3097,0.2145,0.1712,0.2371,0.1699
+Vols d'accessoires sur véhicules,0.1934,0.2849,0.2568,0.1768,0.2657,0.2396
+Vols dans les véhicules,0.1521,0.21,0.1915,0.1364,0.1918,0.1731
+Vols de véhicule,0.1177,0.1604,0.1685,0.1099,0.1507,0.1557
+Vols sans violence contre des personnes,0.0771,0.1405,0.1328,0.0744,0.1363,0.1259
+Vols violents sans arme,0.1641,0.2281,0.206,0.1497,0.1805,0.1904

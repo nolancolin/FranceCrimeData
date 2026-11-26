@@ -1,0 +1,113 @@
+{
+  "rows": 18180,
+  "departments": 101,
+  "years": [
+    2016,
+    2025
+  ],
+  "indicators": {
+    "Cambriolages de logement": {
+      "unit": "Infraction",
+      "denominator": "housing"
+    },
+    "Destructions et dégradations volontaires": {
+      "unit": "Infraction",
+      "denominator": "population"
+    },
+    "Escroqueries et fraudes aux moyens de paiement": {
+      "unit": "Victime",
+      "denominator": "population"
+    },
+    "Homicides": {
+      "unit": "Victime",
+      "denominator": "population"
+    },
+    "Tentatives d'homicide": {
+      "unit": "Victime",
+      "denominator": "population"
+    },
+    "Trafic de stupéfiants": {
+      "unit": "Mis en cause",
+      "denominator": "population"
+    },
+    "Usage de stupéfiants": {
+      "unit": "Mis en cause",
+      "denominator": "population"
+    },
+    "Usage de stupéfiants (AFD)": {
+      "unit": "Mis en cause",
+      "denominator": "population"
+    },
+    "Usage de stupéfiants (hors AFD)": {
+      "unit": "Mis en cause",
+      "denominator": "population"
+    },
+    "Violences physiques hors cadre familial": {
+      "unit": "Victime",
+      "denominator": "population"
+    },
+    "Violences physiques intrafamiliales": {
+      "unit": "Victime",
+      "denominator": "population"
+    },
+    "Violences sexuelles": {
+      "unit": "Victime",
+      "denominator": "population"
+    },
+    "Vols avec armes": {
+      "unit": "Infraction",
+      "denominator": "population"
+    },
+    "Vols d'accessoires sur véhicules": {
+      "unit": "Véhicule",
+      "denominator": "population"
+    },
+    "Vols dans les véhicules": {
+      "unit": "Véhicule",
+      "denominator": "population"
+    },
+    "Vols de véhicule": {
+      "unit": "Véhicule",
+      "denominator": "population"
+    },
+    "Vols sans violence contre des personnes": {
+      "unit": "Victime entendue",
+      "denominator": "population"
+    },
+    "Vols violents sans arme": {
+      "unit": "Infraction",
+      "denominator": "population"
+    }
+  },
+  "flag_counts": {
+    "stale_population": 90
+  },
+  "flagged_by_department": {
+    "976": 90
+  },
+  "zero_years": {
+    "Usage de stupéfiants (AFD)": [
+      2016,
+      2017,
+      2018,
+      2019
+    ]
+  },
+  "incomplete_series": [],
+  "nested_mismatches": 0,
+  "rates_not_per_inhabitant": 1010,
+  "iqr_outside": {
+    "population": [
+      "13",
+      "59",
+      "69",
+      "75"
+    ],
+    "housing": [
+      "13",
+      "59",
+      "69",
+      "75"
+    ]
+  }
+}

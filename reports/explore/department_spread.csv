@@ -1,0 +1,17 @@
+indicator,p10,median,p90,p90_over_p10,highest_dep
+Violences sexuelles,1.6267,1.9319,2.3321,1.4336,75
+Escroqueries et fraudes aux moyens de paiement,4.9308,6.2187,7.3034,1.4812,75
+Violences physiques intrafamiliales,2.8967,3.5286,4.4078,1.5217,62
+Destructions et dégradations volontaires,5.8304,7.3655,9.1959,1.5772,66
+Violences physiques hors cadre familial,2.1736,2.8214,3.9073,1.7976,976
+Cambriolages de logement,3.2429,5.4893,7.2655,2.2404,973
+Vols sans violence contre des personnes,4.1215,5.6101,10.3809,2.5187,75
+Usage de stupéfiants,2.1635,3.5005,5.9526,2.7513,75
+Vols de véhicule,0.7253,1.2616,2.4137,3.3277,13
+Trafic de stupéfiants,0.3214,0.52,1.0941,3.4045,75
+Vols d'accessoires sur véhicules,0.5292,0.9557,1.9198,3.6279,13
+Homicides,0.0054,0.0122,0.0227,4.2186,973
+Tentatives d'homicide,0.0184,0.0467,0.081,4.3906,973
+Vols dans les véhicules,0.9937,2.182,4.3804,4.408,69
+Vols avec armes,0.0231,0.0563,0.135,5.8331,973
+Vols violents sans arme,0.1428,0.2944,0.9465,6.6274,75
