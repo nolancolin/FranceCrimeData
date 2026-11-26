@@ -10,6 +10,7 @@ import pandas as pd
 from delinquance import DOCS_DIR, REPORTS_DIR
 from delinquance.obtain import MANIFEST, RAW_GEOJSON
 from delinquance.scrub import load_modelled
+from delinquance.typology import N_TWINS, PROFILE_YEARS
 
 log = logging.getLogger(__name__)
 
@@ -53,11 +54,18 @@ def rates_by_indicator(df: pd.DataFrame) -> dict:
     return out
 
 
+def national_series(df: pd.DataFrame) -> dict:
+    """{indicator: [rate per year]} from the explore step, in year order."""
+    national = pd.read_csv(REPORTS_DIR / "explore/national_rates.csv")
+    return national.groupby("indicator")["rate"].apply(lambda s: s.round(4).tolist()).to_dict()
+
+
 def build_data(df: pd.DataFrame, names: dict[str, str]) -> dict:
     clusters = pd.read_csv(REPORTS_DIR / "typology/clusters.csv", dtype={"dep": str})
     twins = pd.read_csv(REPORTS_DIR / "typology/twins.csv", dtype={"dep": str, "twin": str})
     summary = json.loads((REPORTS_DIR / "summary.json").read_text())
     manifest = json.loads(MANIFEST.read_text())
+    typology = summary["typology"]
     return {
         "names": names,
         "overseas": list(OVERSEAS),
@@ -65,8 +73,15 @@ def build_data(df: pd.DataFrame, names: dict[str, str]) -> dict:
         "per_housing": sorted(df.loc[df["denominator"] == "housing", "indicator"].unique()),
         "years": sorted(int(y) for y in df["year"].unique()),
         "rates": rates_by_indicator(df),
+        "national": national_series(df),
+        "method": {
+            "name": typology["method"],
+            "k": typology["k"],
+            "profile_years": PROFILE_YEARS,
+            "n_twins": N_TWINS,
+        },
         "clusters": clusters.set_index("dep")["cluster"].to_dict(),
-        "cluster_info": summary["typology"]["clusters"],
+        "cluster_info": typology["clusters"],
         "twins": {
             dep: g.sort_values("rank")[["twin", "distance"]].values.tolist()
             for dep, g in twins.groupby("dep")

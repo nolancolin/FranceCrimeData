@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Délinquance enregistrée par département</title>
+<title>FranceCrimeData</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
   :root { --ink: #1d2430; --muted: #5b6573; --line: #dde2e8; --accent: #1f5f8b; --bg: #fbfbfa; }
@@ -18,6 +18,7 @@
   label { font-size: .9rem; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
   select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: white; max-width: 100%; }
   .map { width: 100%; height: 520px; }
+  .trend { width: 100%; height: 220px; }
   @media (max-width: 600px) { .map { height: 360px; } }
   table { border-collapse: collapse; font-size: .9rem; margin-top: 8px; }
   td, th { padding: 4px 12px 4px 0; text-align: left; border-bottom: 1px solid var(--line); }
@@ -31,31 +32,30 @@
 </head>
 <body>
 <main>
-  <h1>Délinquance enregistrée par département</h1>
-  <p>Faits enregistrés par la police et la gendarmerie, 2016 à 2025 (SSMSI). Ce sont des faits
-    enregistrés, pas la délinquance réelle : une partie des victimes ne porte pas plainte.
-    Code et méthode : <a href="https://github.com/nolancolin/delinquance-france">dépôt GitHub</a>.</p>
+  <h1>FranceCrimeData</h1>
+  <p id="intro">Faits enregistrés par la police et la gendarmerie (SSMSI), département par département.
+    Ce sont des faits enregistrés, pas la délinquance réelle : une partie des victimes ne porte pas plainte.
+    Code et méthode : <a href="https://github.com/nolancolin/FranceCrimeData">dépôt GitHub</a>.</p>
 
-  <h2>Taux par indicateur et par année</h2>
+  <h2>Année par année</h2>
   <div class="controls">
     <label>Indicateur <select id="indicator"></select></label>
     <label>Année <select id="year"></select></label>
   </div>
   <p id="unit"></p>
+  <div id="trend" class="trend"></div>
   <div id="rate-map" class="map"></div>
   <p>Outre-mer (hors carte) :</p>
   <table id="overseas"></table>
 
   <h2>Typologie des départements</h2>
-  <p>Groupes obtenus par KMeans sur le profil de taux (moyenne des 3 dernières années, log, standardisé).
-    Les écarts sont exprimés en écarts-types par rapport à la moyenne des départements.</p>
+  <p id="typology-text"></p>
   <div id="cluster-legend" class="legend"></div>
   <div id="cluster-map" class="map"></div>
   <div id="groups" class="groups"></div>
 
   <h2>Départements jumeaux</h2>
-  <p>Les 5 départements dont le profil de taux est le plus proche (distance euclidienne sur le profil standardisé).
-    Proche ne veut pas dire voisin sur la carte.</p>
+  <p id="twins-text"></p>
   <div class="controls"><label>Département <select id="dep"></select></label></div>
   <table id="twins"></table>
   <div id="twin-map" class="map"></div>
@@ -91,6 +91,14 @@ function drawRates(geo, data) {
     locations: deps, z: deps.map((d) => rates[d]), colorscale: "YlOrRd", reversescale: true,
     text: deps.map((d) => `${label(d, data)}<br>${fmt(rates[d])} pour 1 000`), hoverinfo: "text",
     marker: { line: { color: "white", width: 0.5 } }, colorbar: { thickness: 12, len: 0.6 } }], geoLayout, config);
+  const series = data.national[ind];
+  const yi = data.years.indexOf(Number(year));
+  Plotly.react("trend", [
+    { x: data.years, y: series, mode: "lines+markers", line: { color: "#1f5f8b" }, hoverinfo: "x+y", name: "France" },
+    { x: [Number(year)], y: [series[yi]], mode: "markers", marker: { size: 12, color: "#d9822b" }, hoverinfo: "skip", name: year },
+  ], { margin: { l: 40, r: 10, t: 24, b: 30 }, showlegend: false, paper_bgcolor: "rgba(0,0,0,0)", plot_bgcolor: "rgba(0,0,0,0)",
+    title: { text: "Taux national pour 1 000", font: { size: 13 }, x: 0 }, yaxis: { rangemode: "tozero" },
+    shapes: [{ type: "rect", x0: 2019.5, x1: 2020.5, yref: "paper", y0: 0, y1: 1, fillcolor: "#e6e9ed", line: { width: 0 }, layer: "below" }] }, config);
   document.getElementById("overseas").innerHTML = data.overseas
     .map((d) => `<tr><td>${label(d, data)}</td><td>${fmt(rates[d])}</td></tr>`).join("");
 }
@@ -138,6 +146,14 @@ Promise.all([fetch("data.json").then((r) => r.json()), fetch("departements.geojs
     document.getElementById("indicator").onchange = () => drawRates(geo, data);
     document.getElementById("year").onchange = () => drawRates(geo, data);
     document.getElementById("dep").onchange = () => drawTwins(geo, data);
+    const m = data.method;
+    const first = data.years[0], last = data.years[data.years.length - 1];
+    document.getElementById("intro").insertAdjacentHTML("afterbegin", `De ${first} à ${last}. `);
+    document.getElementById("typology-text").textContent = `${m.k} groupes obtenus par ${m.name === "kmeans" ? "KMeans" : "Ward"}
+      sur le profil de taux (moyenne des ${m.profile_years} dernières années, log, standardisé). Les écarts sont en écarts-types
+      par rapport à la moyenne des départements.`;
+    document.getElementById("twins-text").textContent = `Les ${m.n_twins} départements dont le profil de taux est le plus proche
+      (distance euclidienne sur le profil standardisé). Proche ne veut pas dire voisin sur la carte.`;
     drawRates(geo, data);
     drawClusters(geo, data);
     drawTwins(geo, data);
