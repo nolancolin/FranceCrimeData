@@ -185,6 +185,16 @@ def build_report(df: pd.DataFrame) -> dict:
     }
 
 
+def load_clean(path: Path = CLEAN_CSV) -> pd.DataFrame:
+    return pd.read_csv(path, dtype={"dep": str, "region": str, "flags": str}, keep_default_na=False)
+
+
+def independent_indicators(df: pd.DataFrame) -> list[str]:
+    """Indicators that are not a sub-part of another one (used for profiles and models)."""
+    parts = {p for children in NESTED.values() for p in children}
+    return sorted(set(df["indicator"]) - parts)
+
+
 def run() -> None:
     raw = load_raw(RAW_CSV)
     df = clean(raw)
