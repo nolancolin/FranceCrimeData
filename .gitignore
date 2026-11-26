@@ -6,4 +6,4 @@ __pycache__/
 .DS_Store
 
 # Raw and intermediate data are downloaded or rebuilt by the pipeline.
-data/
+/data/
