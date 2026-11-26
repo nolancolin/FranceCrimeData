@@ -12,16 +12,15 @@ from sklearn.metrics import adjusted_rand_score, silhouette_score
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 
-from delinquance import REPORTS_DIR
-from delinquance.scrub import independent_indicators, load_clean
+from delinquance import FIGURES_DIR, REPORTS_DIR
+from delinquance.scrub import load_modelled
 
 log = logging.getLogger(__name__)
 
 OUT = REPORTS_DIR / "typology"
-FIGURES = REPORTS_DIR / "figures"
 PROFILE_YEARS = 3
 K_RANGE = range(2, 9)
-METHODS = ("kmeans", "ward")
+CLUSTER_METHODS = ("kmeans", "ward")
 MIN_STABILITY = 0.8
 N_BOOT = 50
 N_TWINS = 5
@@ -69,7 +68,7 @@ def stability(x: np.ndarray, method: str, k: int, n_boot: int = N_BOOT) -> float
 
 def compare_clusterings(z: pd.DataFrame) -> pd.DataFrame:
     rows = []
-    for method in METHODS:
+    for method in CLUSTER_METHODS:
         for k in K_RANGE:
             labels = cluster_labels(z.to_numpy(), method, k)
             rows.append(
@@ -85,14 +84,12 @@ def compare_clusterings(z: pd.DataFrame) -> pd.DataFrame:
 
 
 def choose_clustering(table: pd.DataFrame) -> tuple[str, int]:
-    """Best silhouette among stable settings; gaps under 0.01 are a tie, broken by the larger k."""
+    """Best silhouette among the settings whose stability reaches MIN_STABILITY."""
     stable = table[table["stability_ari"] >= MIN_STABILITY]
     if stable.empty:
         raise ValueError("no clustering reaches the stability threshold")
-    best = stable.assign(sil=stable["silhouette"].round(2)).sort_values(
-        ["sil", "k"], ascending=False
-    )
-    return str(best.iloc[0]["method"]), int(best.iloc[0]["k"])
+    best = stable.loc[stable["silhouette"].idxmax()]
+    return str(best["method"]), int(best["k"])
 
 
 def relabel_by_size(labels: np.ndarray) -> np.ndarray:
@@ -146,10 +143,9 @@ def plot_profiles(profiles: pd.DataFrame, path) -> None:
 
 
 def run() -> None:
-    df = load_clean()
-    df = df[df["indicator"].isin(independent_indicators(df))]
+    df = load_modelled()
     OUT.mkdir(parents=True, exist_ok=True)
-    FIGURES.mkdir(parents=True, exist_ok=True)
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     profile = build_profile(df)
     z = standardize(profile)
@@ -169,5 +165,5 @@ def run() -> None:
     scores.round(3).assign(cluster=clusters).to_csv(OUT / "clusters.csv")
     cluster_profiles.round(3).to_csv(OUT / "cluster_profiles.csv")
     find_twins(z).to_csv(OUT / "twins.csv", index=False)
-    plot_pca(scores, clusters, variance, FIGURES / "pca_clusters.png")
-    plot_profiles(cluster_profiles, FIGURES / "cluster_profiles.png")
+    plot_pca(scores, clusters, variance, FIGURES_DIR / "pca_clusters.png")
+    plot_profiles(cluster_profiles, FIGURES_DIR / "cluster_profiles.png")

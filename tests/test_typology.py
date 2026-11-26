@@ -43,8 +43,8 @@ def test_choice_prefers_stable_then_silhouette():
             "stability_ari": [0.95, 0.85, 0.50, 0.90],
         }
     )
-    # ward k=2 has the best silhouette but is unstable; 0.313 and 0.309 tie at 0.31.
-    assert choose_clustering(table) == ("kmeans", 3)
+    # ward k=2 has the best silhouette but is unstable, so it is skipped.
+    assert choose_clustering(table) == ("kmeans", 2)
 
 
 def test_twins_exclude_self(cleaned):
