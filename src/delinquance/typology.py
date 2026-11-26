@@ -1,5 +1,6 @@
 """Model, part 1: typology of departments from their rate profile (PCA, clustering, twins)."""
 
+import json
 import logging
 
 import numpy as np
@@ -164,6 +165,7 @@ def run() -> None:
     variance.round(4).to_csv(OUT / "pca_variance.csv")
     loadings.round(3).to_csv(OUT / "pca_loadings.csv")
     table.to_csv(OUT / "cluster_selection.csv", index=False)
+    (OUT / "choice.json").write_text(json.dumps({"method": method, "k": k}) + "\n")
     scores.round(3).assign(cluster=clusters).to_csv(OUT / "clusters.csv")
     cluster_profiles.round(3).to_csv(OUT / "cluster_profiles.csv")
     find_twins(z).to_csv(OUT / "twins.csv", index=False)
