@@ -83,9 +83,11 @@ def run() -> None:
     checksum = resource.get("checksum") or {}
     if checksum.get("type") and checksum.get("value"):
         check_hash(RAW_CSV, checksum["value"], checksum["type"])
+    else:
+        log.warning("no checksum published by the API, integrity not verified")
     download(GEOJSON_URL, RAW_GEOJSON)
     check_hash(RAW_GEOJSON, GEOJSON_SHA256, "sha256")
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     manifest = build_manifest(metadata, resource, RAW_CSV)
     MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
-    log.info("wrote %s", MANIFEST.relative_to(MANIFEST.parents[1]))
+    log.info("wrote %s", MANIFEST.name)

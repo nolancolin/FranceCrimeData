@@ -6,14 +6,14 @@ import numpy as np
 import pandas as pd
 from matplotlib.figure import Figure
 
-from delinquance import REPORTS_DIR
-from delinquance.scrub import independent_indicators, load_clean
+from delinquance import FIGURES_DIR, REPORTS_DIR
+from delinquance.scrub import load_modelled
 
 log = logging.getLogger(__name__)
 
 OUT = REPORTS_DIR / "explore"
-FIGURES = REPORTS_DIR / "figures"
 COLOR = "#1f5f8b"
+SHOCK_YEAR = 2020  # lockdowns
 
 
 def national_rates(df: pd.DataFrame) -> pd.DataFrame:
@@ -24,13 +24,13 @@ def national_rates(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def changes(national: pd.DataFrame) -> pd.DataFrame:
-    """Relative change over the whole period and during the 2020 lockdown year."""
+    """Relative change over the whole period and during the shock year (2020)."""
     wide = national.pivot(index="indicator", columns="year", values="rate")
     first, last = wide.columns.min(), wide.columns.max()
     return pd.DataFrame(
         {
-            f"change_{first}_{last}": wide[last] / wide[first] - 1,
-            "change_2019_2020": wide[2020] / wide[2019] - 1,
+            "change_whole_period": wide[last] / wide[first] - 1,
+            "change_shock_year": wide[SHOCK_YEAR] / wide[SHOCK_YEAR - 1] - 1,
         }
     ).round(3)
 
@@ -54,7 +54,7 @@ def plot_national(national: pd.DataFrame, path) -> None:
     axes = fig.subplots(nrows, ncols, sharex=True)
     for ax, ind in zip(axes.flat, indicators, strict=False):
         s = national[national["indicator"] == ind]
-        ax.axvspan(2019.5, 2020.5, color="0.9", lw=0)
+        ax.axvspan(SHOCK_YEAR - 0.5, SHOCK_YEAR + 0.5, color="0.9", lw=0)
         ax.plot(s["year"], s["rate"], color=COLOR, marker="o", ms=3)
         ax.set_title(ind, fontsize=9)
         ax.set_ylim(bottom=0)
@@ -90,18 +90,17 @@ def plot_spread(df: pd.DataFrame, spread: pd.DataFrame, year: int, path) -> None
 
 
 def run() -> None:
-    df = load_clean()
-    df = df[df["indicator"].isin(independent_indicators(df))]
+    df = load_modelled()
     year = int(df["year"].max())
     OUT.mkdir(parents=True, exist_ok=True)
-    FIGURES.mkdir(parents=True, exist_ok=True)
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
     national = national_rates(df)
     national.round(5).to_csv(OUT / "national_rates.csv", index=False)
     changes(national).to_csv(OUT / "national_changes.csv")
-    plot_national(national, FIGURES / "national_trends.png")
+    plot_national(national, FIGURES_DIR / "national_trends.png")
 
     spread = department_spread(df, year)
     spread.to_csv(OUT / "department_spread.csv")
-    plot_spread(df, spread, year, FIGURES / "department_spread.png")
+    plot_spread(df, spread, year, FIGURES_DIR / "department_spread.png")
     log.info("explore outputs written for %d indicators", national["indicator"].nunique())

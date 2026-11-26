@@ -186,7 +186,7 @@ def build_report(df: pd.DataFrame) -> dict:
 
 
 def load_clean(path: Path = CLEAN_CSV) -> pd.DataFrame:
-    return pd.read_csv(path, dtype={"dep": str, "region": str, "flags": str}, keep_default_na=False)
+    return pd.read_csv(path, dtype={"dep": str, "region": str}, converters={"flags": str})
 
 
 def independent_indicators(df: pd.DataFrame) -> list[str]:
@@ -195,10 +195,17 @@ def independent_indicators(df: pd.DataFrame) -> list[str]:
     return sorted(set(df["indicator"]) - parts)
 
 
+def load_modelled(path: Path = CLEAN_CSV) -> pd.DataFrame:
+    """Clean rows of the independent indicators only, the input of every later step."""
+    df = load_clean(path)
+    return df[df["indicator"].isin(independent_indicators(df))]
+
+
 def run() -> None:
     raw = load_raw(RAW_CSV)
     df = clean(raw)
-    assert len(df) == len(raw), "scrub must keep every row"
+    if len(df) != len(raw):
+        raise RuntimeError("scrub must keep every row")
     report = build_report(df)
     for name, n in report["flag_counts"].items():
         log.warning("%d rows flagged %s", n, name)

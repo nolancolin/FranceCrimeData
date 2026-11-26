@@ -54,7 +54,6 @@ def summarize() -> dict:
     by_indicator = read("forecast/scores_by_indicator.csv", index_col=0)
     choice = json.loads((REPORTS_DIR / "typology/choice.json").read_text())
     chosen = selection.set_index(["method", "k"]).loc[(choice["method"], choice["k"])]
-    period = changes.columns[0]
     return {
         "data": {
             key: scrub[key]
@@ -62,9 +61,9 @@ def summarize() -> dict:
         }
         | {"indicators_modelled": len(changes), "iqr_outside": scrub["iqr_outside"]},
         "explore": {
-            "largest_rises": changes[period].nlargest(3).to_dict(),
-            "largest_falls": changes[period].nsmallest(3).to_dict(),
-            "drop_2020": changes["change_2019_2020"].nsmallest(3).to_dict(),
+            "largest_rises": changes["change_whole_period"].nlargest(3).to_dict(),
+            "largest_falls": changes["change_whole_period"].nsmallest(3).to_dict(),
+            "drop_2020": changes["change_shock_year"].nsmallest(3).to_dict(),
             "spread_p90_over_p10": spread["p90_over_p10"].agg(["min", "max"]).round(2).to_dict(),
         },
         "typology": {

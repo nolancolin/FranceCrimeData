@@ -9,7 +9,7 @@ import pandas as pd
 
 from delinquance import DOCS_DIR, REPORTS_DIR
 from delinquance.obtain import MANIFEST, RAW_GEOJSON
-from delinquance.scrub import independent_indicators, load_clean
+from delinquance.scrub import load_modelled
 
 log = logging.getLogger(__name__)
 
@@ -79,8 +79,7 @@ def build_data(df: pd.DataFrame, names: dict[str, str]) -> dict:
 
 
 def run() -> None:
-    df = load_clean()
-    df = df[df["indicator"].isin(independent_indicators(df))]
+    df = load_modelled()
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
     data = build_data(df, department_names(RAW_GEOJSON))
     (DOCS_DIR / "data.json").write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")))
