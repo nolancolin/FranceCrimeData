@@ -24,13 +24,14 @@ def national_rates(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def changes(national: pd.DataFrame) -> pd.DataFrame:
-    """Relative change over the whole period and during the shock year (2020)."""
+    """Relative change over the whole period, during the shock year (2020) and in the last year."""
     wide = national.pivot(index="indicator", columns="year", values="rate")
     first, last = wide.columns.min(), wide.columns.max()
     return pd.DataFrame(
         {
             "change_whole_period": wide[last] / wide[first] - 1,
             "change_shock_year": wide[SHOCK_YEAR] / wide[SHOCK_YEAR - 1] - 1,
+            "change_last_year": wide[last] / wide[last - 1] - 1,
         }
     ).round(3)
 
