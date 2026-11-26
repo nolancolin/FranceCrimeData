@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from delinquance import explore, forecast, interpret, obtain, scrub, typology
+from delinquance import demo, explore, forecast, interpret, obtain, scrub, typology
 
 STEPS = {
     "obtain": obtain.run,
@@ -12,6 +12,7 @@ STEPS = {
     "typology": typology.run,
     "forecast": forecast.run,
     "interpret": interpret.run,
+    "demo": demo.run,
 }
 
 
