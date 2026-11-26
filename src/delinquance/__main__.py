@@ -3,7 +3,11 @@
 import argparse
 import logging
 
-STEPS: dict = {}
+from delinquance import obtain
+
+STEPS = {
+    "obtain": obtain.run,
+}
 
 
 def main() -> None:
