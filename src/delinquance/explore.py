@@ -14,6 +14,28 @@ log = logging.getLogger(__name__)
 OUT = REPORTS_DIR / "explore"
 COLOR = "#1f5f8b"
 SHOCK_YEAR = 2020  # lockdowns
+# Families used to colour the index figure only; nothing is summed across indicators.
+FAMILIES = {
+    "Atteintes aux biens": [
+        "Cambriolages de logement",
+        "Destructions et dégradations volontaires",
+        "Escroqueries et fraudes aux moyens de paiement",
+        "Vols avec armes",
+        "Vols d'accessoires sur véhicules",
+        "Vols dans les véhicules",
+        "Vols de véhicule",
+        "Vols sans violence contre des personnes",
+        "Vols violents sans arme",
+    ],
+    "Atteintes aux personnes": [
+        "Homicides",
+        "Tentatives d'homicide",
+        "Violences physiques hors cadre familial",
+        "Violences physiques intrafamiliales",
+        "Violences sexuelles",
+    ],
+    "Stupéfiants (mis en cause)": ["Trafic de stupéfiants", "Usage de stupéfiants"],
+}
 
 
 def national_rates(df: pd.DataFrame) -> pd.DataFrame:
@@ -68,6 +90,47 @@ def plot_national(national: pd.DataFrame, path) -> None:
     fig.savefig(path, dpi=120)
 
 
+def spread_labels(values: pd.Series, gap: float) -> pd.Series:
+    """Move label positions apart so that two labels are at least `gap` apart vertically."""
+    order = values.sort_values()
+    placed = []
+    for v in order:
+        placed.append(max(v, placed[-1] + gap) if placed else v)
+    return pd.Series(placed, index=order.index)
+
+
+def plot_index(national: pd.DataFrame, path) -> None:
+    """Each indicator as an index (first year = 100), one panel per family."""
+    wide = national.pivot(index="year", columns="indicator", values="rate")
+    index = wide / wide.iloc[0] * 100
+    first, last = int(index.index[0]), int(index.index[-1])
+    fig = Figure(figsize=(15, 5.5))
+    axes = fig.subplots(1, len(FAMILIES), sharey=True)
+    for ax, (family, members) in zip(axes, FAMILIES.items(), strict=True):
+        members = [m for m in members if m in index]
+        ax.axvspan(SHOCK_YEAR - 0.5, SHOCK_YEAR + 0.5, color="0.92", lw=0)
+        ax.axhline(100, color="0.6", lw=0.8)
+        label_y = spread_labels(index[members].iloc[-1], gap=7)
+        for ind in members:
+            line = ax.plot(index.index, index[ind], lw=1.8)[0]
+            end = index[ind].iloc[-1]
+            ax.annotate(
+                f"{ind} ({end - 100:+.0f} %)",
+                xy=(last, end),
+                xytext=(last + 0.4, label_y[ind]),
+                fontsize=7.5,
+                va="center",
+                color=line.get_color(),
+            )
+        ax.set_title(family, fontsize=11)
+        ax.set_xlim(first, last + 7)
+        ax.set_xticks([first, SHOCK_YEAR, last])
+        ax.spines[["top", "right"]].set_visible(False)
+    axes[0].set_ylabel(f"Taux national, base 100 en {first}")
+    fig.tight_layout()
+    fig.savefig(path, dpi=120)
+
+
 def plot_spread(df: pd.DataFrame, spread: pd.DataFrame, year: int, path) -> None:
     rows = df[df["year"] == year]
     order = list(spread.index)
@@ -100,6 +163,7 @@ def run() -> None:
     national.round(5).to_csv(OUT / "national_rates.csv", index=False)
     changes(national).to_csv(OUT / "national_changes.csv")
     plot_national(national, FIGURES_DIR / "national_trends.png")
+    plot_index(national, FIGURES_DIR / "national_index.png")
 
     spread = department_spread(df, year)
     spread.to_csv(OUT / "department_spread.csv")
