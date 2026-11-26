@@ -2,7 +2,10 @@
 
 import json
 import logging
+import platform
+from importlib.metadata import version
 
+import numpy as np
 import pandas as pd
 
 from delinquance import REPORTS_DIR
@@ -52,6 +55,7 @@ def summarize() -> dict:
     clusters = read("typology/clusters.csv", index_col=0, dtype={"dep": str})
     profiles = read("typology/cluster_profiles.csv", index_col=0)
     by_indicator = read("forecast/scores_by_indicator.csv", index_col=0)
+    overall = read("forecast/scores_overall.csv").iloc[0]
     choice = json.loads((REPORTS_DIR / "typology/choice.json").read_text())
     chosen = selection.set_index(["method", "k"]).loc[(choice["method"], choice["k"])]
     return {
@@ -64,6 +68,7 @@ def summarize() -> dict:
             "largest_rises": changes["change_whole_period"].nlargest(3).to_dict(),
             "largest_falls": changes["change_whole_period"].nsmallest(3).to_dict(),
             "drop_2020": changes["change_shock_year"].nsmallest(3).to_dict(),
+            "last_year": changes["change_last_year"].sort_values().to_dict(),
             "spread_p90_over_p10": spread["p90_over_p10"].agg(["min", "max"]).round(2).to_dict(),
         },
         "typology": {
@@ -79,7 +84,9 @@ def summarize() -> dict:
             "clusters": describe_clusters(profiles, clusters),
         },
         "forecast": {
-            "overall_mae": read("forecast/scores_overall.csv").iloc[0].to_dict(),
+            "overall_mae": overall.to_dict(),
+            # exp(MAE) - 1 on the log scale: the typical relative error on the rate.
+            "typical_relative_error": np.expm1(overall).round(3).to_dict(),
             "mae_by_year": read("forecast/scores_by_year.csv", index_col=0).to_dict(orient="index"),
             "gbm_minus_naive": read("forecast/gbm_minus_naive.csv", index_col=0).to_dict(
                 orient="index"
@@ -87,6 +94,10 @@ def summarize() -> dict:
             "indicators_where_gbm_beats_naive": sorted(
                 by_indicator.index[by_indicator["mae_gbm"] < by_indicator["mae_naive"]]
             ),
+        },
+        "environment": {
+            "python": platform.python_version(),
+            **{lib: version(lib) for lib in ["numpy", "pandas", "scikit-learn", "matplotlib"]},
         },
     }
 
