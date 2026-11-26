@@ -5,7 +5,7 @@
 
 La question : les départements ont-ils des profils de délinquance enregistrée différents, et peut-on prévoir le taux de l'année suivante mieux qu'en recopiant celui de l'année précédente ?
 
-Résultat principal. Sur un backtest de 2022 à 2025, recopier le taux de l'année précédente donne une erreur moyenne de 0,146 (sur le log du taux). Mon modèle de gradient boosting fait 0,158. Il perd nettement en 2022, puis fait jeu égal de 2023 à 2025 : l'écart reste dans l'intervalle de confiance. Côté typologie, la partition la plus nette et stable a 3 groupes (KMeans, silhouette 0,309, stabilité ARI 0,851).
+Résultat principal. Pour prévoir le taux de l'année suivante, recopier celui de l'année en cours reste la méthode la plus fiable parmi celles que j'ai testées. Sur un backtest de 2022 à 2025, son erreur moyenne est de 0,146 (MAE sur le log du taux), contre 0,158 pour mon modèle de gradient boosting. Le modèle perd nettement en 2022, puis fait jeu égal de 2023 à 2025. Côté profils, les départements se rangent en 3 groupes stables mais qui se recouvrent (KMeans, silhouette 0,309, stabilité ARI 0,851) : 67 départements sous la moyenne sur presque tout, 30 départements plus urbains où les vols sont plus fréquents, et 4 départements d'outre-mer.
 
 Démo : [nolancolin.github.io/delinquance-france](https://nolancolin.github.io/delinquance-france/) (carte par indicateur et par année, carte des groupes, départements jumeaux).
 
