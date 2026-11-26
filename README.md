@@ -12,37 +12,53 @@ Données ouvertes du ministère de l'Intérieur · nettoyage vérifié · ACP et
 
 <img src="reports/figures/national_index.png" alt="Évolution de chaque indicateur depuis 2016, en base 100" width="900">
 
-[Voir la carte interactive](https://nolancolin.github.io/FranceCrimeData/)
+**[Ouvrir la carte interactive](https://nolancolin.github.io/FranceCrimeData/)**
+
+[Le projet](#le-projet) · [Ce que montrent les chiffres](#ce-que-montrent-les-chiffres) · [Prévoir l'année suivante](#prévoir-lannée-suivante) · [Profils de départements](#des-profils-de-départements) · [Essayer](#essayer) · [Méthode](#comment-ça-marche) · [Limites](#les-limites)
 
 </div>
 
 ## Le projet
 
-L'insécurité revient dans presque chaque débat politique en France, souvent résumée en une phrase : « la délinquance explose » ou « elle baisse ». Les chiffres officiels sont publics. Chaque année, le service statistique du ministère de l'Intérieur (SSMSI) publie les faits enregistrés par la police et la gendarmerie, pour chaque département et 18 indicateurs. J'ai voulu les regarder de près, indicateur par indicateur, sans les additionner n'importe comment.
+On parle beaucoup d'insécurité en ce moment, et on entend souvent un seul chiffre : « la délinquance explose », ou au contraire « elle baisse ». Je voulais savoir ce que disent vraiment les données officielles.
 
-La réponse courte : ça dépend complètement de quoi on parle.
+Chaque année, le service statistique du ministère de l'Intérieur (SSMSI) publie les faits enregistrés par la police et la gendarmerie, pour chaque département et 18 types de faits : cambriolages, vols de véhicule, violences sexuelles, escroqueries, trafic de stupéfiants... J'ai pris toute la série, de 2016 à 2025, la dernière année publiée (juillet 2026), et je l'ai analysée de bout en bout :
 
-- **Les vols baissent.** Entre 2016 et 2025, le taux de vols violents sans arme a baissé de 49 %, celui des vols avec armes de 29 %, celui des vols de véhicule de 26 %.
-- **Les violences enregistrées montent fort.** Violences sexuelles +148 %, violences physiques intrafamiliales +120 %, tentatives d'homicide +93 %. Une partie de cette hausse peut venir de victimes qui portent plus souvent plainte. Les données ne permettent pas de faire la part des choses.
-- **Les escroqueries suivent leur propre courbe** : +74 %, sans aucun creux en 2020.
-- **En 2025, dernière année publiée**, le trafic de stupéfiants (+9,3 %), les violences sexuelles (+7,9 %) et les escroqueries (+7,4 %) progressent encore. Les vols de véhicule (-9,3 %) et les vols dans les véhicules (-8,8 %) reculent.
-
-Entre départements, les écarts ne sont pas les mêmes selon le type de faits. Pour les violences sexuelles, le 90e centile des départements n'est que 1,43 fois au-dessus du 10e. Pour les vols violents sans arme, c'est 6,63 fois.
+1. télécharger les données et noter leur version exacte ;
+2. les nettoyer sans rien abîmer ;
+3. regarder comment chaque type de faits évolue, et où ;
+4. regrouper les départements qui se ressemblent ;
+5. essayer de prévoir l'année suivante, et vérifier honnêtement si ça marche ;
+6. tout mettre sur une carte interactive.
 
 Ce projet est né d'un projet de groupe en L2 (2025). Je l'ai entièrement repris et réécrit seul en 2026.
 
 Ce qui m'a le plus appris :
 
 - **Un nettoyage peut fabriquer des erreurs.** La première version « corrigeait » les taux des cambriolages, qui sont publiés pour 1 000 logements et pas pour 1 000 habitants. Elle plafonnait aussi la population de Paris ou du Nord comme si c'étaient des valeurs aberrantes. Maintenant, rien n'est supprimé ni corrigé : les anomalies sont signalées.
-- **Comparer en taux, jamais en nombres.** Le Nord aura toujours plus de faits que la Lozère. La question utile, c'est le taux.
-- **Un modèle qui ne bat pas la baseline, c'est un résultat.** Pour prévoir l'année suivante, recopier l'année en cours fait mieux qu'un gradient boosting. Je montre pourquoi plus bas.
-- **Des données récentes, une méthode testée sur le passé.** Les chiffres vont jusqu'à 2025, la dernière année publiée par le SSMSI (juillet 2026). Les prévisions sont validées sur 2022 à 2025, chaque année prédite seulement avec les années d'avant.
+- **Comparer en taux, jamais en nombres.** Le Nord aura toujours plus de faits que la Lozère, juste parce qu'il est plus peuplé. La question utile, c'est le taux.
+- **Un modèle qui ne bat pas la baseline, c'est un résultat.** Pour prévoir l'année suivante, recopier l'année en cours fait mieux que mon gradient boosting. J'explique pourquoi plus bas.
+- **Des données récentes, une méthode testée sur le passé.** Les prévisions sont validées sur 2022, 2023, 2024 et 2025, chaque année étant prédite seulement avec les années d'avant.
 
-## Résultats
+## Ce que montrent les chiffres
 
-### Prévoir le taux de l'année suivante
+La réponse courte : « la délinquance » en un seul chiffre, ça n'a pas de sens. Les vols et les violences ne vont pas du tout dans le même sens.
 
-Pour chaque couple (département, indicateur), je prédis le taux de l'année N en n'utilisant que les années d'avant. Je le fais pour 2022, 2023, 2024 et 2025 (backtest glissant) et je compare trois méthodes. L'erreur est mesurée sur log(1 + taux pour 100 000), pour qu'un écart de 10 % compte pareil sur un petit et un grand taux.
+- **Les vols baissent.** Entre 2016 et 2025, le taux de vols violents sans arme a baissé de 49 %, celui des vols avec armes de 29 %, celui des vols de véhicule de 26 %, celui des cambriolages de 19 %.
+- **Les violences enregistrées montent fort.** Violences sexuelles +148 %, violences physiques intrafamiliales +120 %, tentatives d'homicide +93 %. Une partie de cette hausse peut venir de victimes qui portent plus souvent plainte. Les données seules ne permettent pas de faire la part des choses.
+- **Les escroqueries suivent leur propre courbe.** +74 % sur la période, et elles sont les seules atteintes aux biens à ne pas baisser en 2020.
+- **En 2025**, le trafic de stupéfiants (+9,3 %), les violences sexuelles (+7,9 %) et les escroqueries (+7,4 %) progressent encore. Les vols de véhicule (-9,3 %) et les vols dans les véhicules (-8,8 %) reculent.
+
+Quelques résultats qui m'ont surpris :
+
+- Les tentatives d'homicide ont presque doublé (+93 %), mais le taux d'homicides, lui, est quasiment stable (+4 %).
+- Les violences sexuelles sont l'indicateur où les départements se ressemblent le plus : le 90e centile n'est que 1,43 fois au-dessus du 10e. Pour les vols violents sans arme, c'est 6,63 fois. Et c'est le seul indicateur au même niveau dans les deux groupes de départements (voir plus bas).
+- L'usage de stupéfiants (+65 %) décolle juste après 2020, l'année où les amendes forfaitaires apparaissent dans les données. Ce chiffre compte des personnes contrôlées : il suit aussi l'activité des forces de l'ordre.
+- Paris ne ressemble à aucun autre département : son plus proche « jumeau », le Rhône, est à une distance de 6,04, alors que la Sarthe a un jumeau, la Vienne, à 1,84.
+
+## Prévoir l'année suivante
+
+Pour chaque couple (département, type de faits), je prédis le taux de l'année N en n'utilisant que les années d'avant. Je le fais pour 2022, 2023, 2024 et 2025 (backtest glissant) et je compare trois méthodes. L'erreur est mesurée sur log(1 + taux pour 100 000), pour qu'un écart de 10 % compte pareil sur un petit et un grand taux.
 
 | Année prédite | Recopier l'année précédente | Tendance sur 3 ans | Gradient boosting |
 |---|---|---|---|
@@ -56,17 +72,17 @@ En clair, recopier l'année précédente se trompe d'environ 15,7 % sur le taux.
 
 Le modèle rate surtout 2022. Il n'avait appris que sur 2019, 2020 et 2021, donc sur le confinement et le rebond qui a suivi, et il prolonge des variations qui ne se répètent pas. De 2023 à 2025, il fait jeu égal : l'écart avec la baseline va de -0,0019 à +0,0019 et l'intervalle bootstrap à 95 % contient zéro chaque année.
 
-Par indicateur, il gagne sur 8 des 16. Il gagne surtout sur ceux qui montent régulièrement, comme les violences intrafamiliales (0,062, contre 0,079 pour la tendance et 0,090 pour l'année précédente). Il gagne aussi sur les petits effectifs comme les homicides, où il lisse le bruit. Il perd sur les cambriolages (0,183 contre 0,121) et sur la plupart des vols, sauf les vols avec armes. Avec 10 années, dont une hors norme, il n'y a pas grand-chose à apprendre de plus que « l'an prochain ressemblera à cette année ».
+Par type de faits, il gagne sur 8 des 16. Il gagne surtout sur ceux qui montent régulièrement, comme les violences intrafamiliales (0,062, contre 0,079 pour la tendance et 0,090 pour l'année précédente). Il gagne aussi sur les petits effectifs comme les homicides, où il lisse le bruit. Il perd sur les cambriolages (0,183 contre 0,121) et sur la plupart des vols, sauf les vols avec armes. Avec 10 années, dont une hors norme, il n'y a pas grand-chose à apprendre de plus que « l'an prochain ressemblera à cette année ».
 
 <img src="reports/figures/forecast_scores.png" alt="Erreur de prévision par indicateur" width="640">
 
-### Des profils de départements
+## Des profils de départements
 
 Chaque département est décrit par ses 16 taux (moyenne des 3 dernières années, passés au log puis standardisés). Sur ce profil :
 
 - **L'ACP** montre un premier axe qui explique 45 % de la variance, avec tous ses poids positifs. C'est un niveau général, porté d'abord par les vols. Le deuxième axe (19 %) oppose les homicides et violences aux escroqueries.
-- **Le clustering** sépare 2 groupes : 68 départements sous la moyenne sur presque tout, et 33 au-dessus (notamment les grandes agglomérations, Île-de-France, pourtour méditerranéen, Antilles, Guyane, Mayotte). Les violences sexuelles sont la seule exception : même niveau dans les deux groupes (-0,01 et +0,02 écart-type).
-- **Les départements jumeaux** sont les 5 profils les plus proches. La Sarthe a pour plus proche jumeau la Vienne, à une distance de 1,84. Paris est seul : son plus proche jumeau, le Rhône, est à 6,04.
+- **Le clustering** sépare 2 groupes : 68 départements sous la moyenne sur presque tout, et 33 au-dessus (notamment les grandes agglomérations, l'Île-de-France, le pourtour méditerranéen, les Antilles, la Guyane et Mayotte). Les violences sexuelles sont la seule exception : même niveau dans les deux groupes (-0,01 et +0,02 écart-type).
+- **Les départements jumeaux** sont les 5 profils les plus proches de chaque département. On peut les chercher sur la carte.
 
 J'ai comparé KMeans et Ward pour k de 2 à 8, sur la silhouette et la stabilité (ARI moyen sur 50 tirages de 80 % des départements). Ward n'est stable pour aucun k (ARI max 0,577). KMeans avec k = 2 a la meilleure silhouette (0,313) et une stabilité de 0,957. Avec k = 3, la silhouette est presque la même (0,309) : on sépare juste un petit groupe de 4 départements. Une silhouette autour de 0,3 veut dire que les groupes existent mais se recouvrent. Pour un département précis, ses jumeaux en disent plus que son groupe.
 
@@ -74,7 +90,11 @@ J'ai comparé KMeans et Ward pour k de 2 à 8, sur la silhouette et la stabilit�
 
 ## La carte interactive
 
-[nolancolin.github.io/FranceCrimeData](https://nolancolin.github.io/FranceCrimeData/) : choisir un indicateur et une année, voir la carte des taux et la courbe nationale, la carte des groupes, et chercher les jumeaux d'un département. La page est statique et générée par le pipeline.
+**[nolancolin.github.io/FranceCrimeData](https://nolancolin.github.io/FranceCrimeData/)**
+
+On choisit un type de faits et une année : la carte des taux s'affiche avec la courbe nationale. Plus bas, la carte des groupes et la recherche des jumeaux d'un département. La page est statique et générée par le pipeline.
+
+<img src="docs/apercu.png" alt="Aperçu de la carte interactive" width="720">
 
 ## Essayer
 
@@ -95,7 +115,16 @@ INFO delinquance.forecast: overall MAE: {'mae_naive': 0.146, 'mae_trend': 0.1923
 INFO delinquance.demo: demo written to docs
 ```
 
-`make all` télécharge la dernière version des données, refait toutes les étapes et régénère `reports/` et `docs/`, en une dizaine de secondes. Deux exécutions donnent des fichiers identiques. `make test` lance les 28 tests sur un extrait réel de la base, sans réseau. Une étape seule : `python -m delinquance scrub` (ou `obtain`, `explore`, `typology`, `forecast`, `interpret`, `demo`).
+`make all` télécharge la dernière version des données, refait toutes les étapes et régénère `reports/` et `docs/` en une dizaine de secondes. Deux exécutions donnent des fichiers identiques.
+
+| Commande | Effet |
+|---|---|
+| `make install` | crée le `.venv` et installe le projet |
+| `make data` | télécharge seulement les données |
+| `make all` | refait tout le pipeline |
+| `make test` | lance les 28 tests, sur un extrait réel de la base, sans réseau |
+| `make lint` | vérifie le code avec ruff |
+| `python -m delinquance <étape>` | une seule étape : `obtain`, `scrub`, `explore`, `typology`, `forecast`, `interpret` ou `demo` |
 
 ## Comment ça marche
 
@@ -134,7 +163,7 @@ Bilan dans [`reports/scrub_report.json`](reports/scrub_report.json) : aucun taux
 
 Un seul `HistGradientBoostingRegressor` de scikit-learn pour tous les couples. Il prédit la variation depuis l'année précédente à partir des trois derniers log-taux, de la dernière variation, de la variation moyenne des départements pour cet indicateur l'an passé, et de l'indicateur lui-même. Les hyperparamètres ont été fixés une fois, pas réglés sur les années de test. Un test remplace les années N et suivantes par du bruit et vérifie que la prédiction de N ne bouge pas : il n'y a pas de fuite.
 
-### Le code
+### Où est quoi
 
 ```
 src/delinquance/
