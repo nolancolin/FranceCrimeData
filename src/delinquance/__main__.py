@@ -3,12 +3,13 @@
 import argparse
 import logging
 
-from delinquance import explore, obtain, scrub
+from delinquance import explore, obtain, scrub, typology
 
 STEPS = {
     "obtain": obtain.run,
     "scrub": scrub.run,
     "explore": explore.run,
+    "typology": typology.run,
 }
 
 
