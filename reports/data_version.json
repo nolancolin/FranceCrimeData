@@ -9,7 +9,7 @@
   "resource_last_modified": "2026-07-09T12:00:39.199000+00:00",
   "sha256": "05fd70cbfe72f694826a8431630aa798071ab1f653b61fafbfc90a816b0122b1",
   "size_bytes": 2001231,
-  "downloaded_at": "2026-11-26T12:20:25+00:00",
+  "downloaded_at": "2026-11-26T12:44:41+00:00",
   "geojson_url": "https://raw.githubusercontent.com/gregoiredavid/france-geojson/5d34ee6d0140c29f785fdb047d9329f1aab58833/departements-version-simplifiee.geojson",
   "geojson_sha256": "c08a1ad48299763b50ef649f05a911c1021500c94719a1aa22a9d06191e43fc3"
 }
